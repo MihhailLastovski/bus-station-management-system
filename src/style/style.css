@@ -35,11 +35,10 @@ h1 {
 }
 
 footer {
-    position: fixed;
     bottom: 0;
     height: 10px;
-    width: 100%;
-    padding: 10px;
+    width: 97%;
+    padding: 25px;
 }
 
 footer p {
@@ -119,10 +118,10 @@ input[type="submit"]:hover {
 #searchInput {
     margin-top: 10px;
     margin-bottom: 10px;
-    padding: 5px;
     border: 5px solid #ddd;
     border-radius: 5px;
     width: 99%;
+    padding: 5px;
     font-size: 20px;
     font-style: oblique;
 }

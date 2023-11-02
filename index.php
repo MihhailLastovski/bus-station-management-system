@@ -1,51 +1,91 @@
 <?php
-    function sortXML($xml, $sortField) {
-        $sortedXML = $xml->xpath('//buss');
-        usort($sortedXML, function($a, $b) use ($sortField) {
-            return strnatcmp($a->$sortField, $b->$sortField);
-        });
+$xmlString = file_get_contents('src/data/busses_data.xml'); 
+$xml = simplexml_load_string($xmlString);
+$json = json_encode($xml, JSON_PRETTY_PRINT);
 
-        $sortedXml = new SimpleXMLElement('<bussid></bussid>');
-        foreach ($sortedXML as $node) {
-            $sortedXml->addChild('buss', $node->asXML());
-        }
+$jsonFile = 'src/data/busses.json'; 
 
-        return $sortedXml;
+if (filesize($jsonFile) === 0) 
+{    
+    $xmlString = file_get_contents('src/data/busses_data.xml');
+    $xml = simplexml_load_string($xmlString);
+    $json = json_encode($xml, JSON_PRETTY_PRINT);
+
+    $jsonData = json_decode($json, true);
+    
+    file_put_contents($jsonFile, json_encode($jsonData, JSON_PRETTY_PRINT));
+}
+
+
+function sortXML($xml, $sortField) {
+    $sortedXML = $xml->xpath('//buss');
+    usort($sortedXML, function($a, $b) use ($sortField) {
+        return strnatcmp($a->$sortField, $b->$sortField);
+    });
+
+    $sortedXml = new SimpleXMLElement('<bussid></bussid>');
+    foreach ($sortedXML as $node) {
+        $sortedXml->addChild('buss', $node->asXML());
     }
 
-    function searchXML($xml, $searchField) {
-        $filteredXML = new SimpleXMLElement('<bussid></bussid>');
-        foreach ($xml->xpath('//buss') as $node) {
-            foreach ($node->children() as $child) {
-                if (stristr($child, $searchField) !== false) {
-                    $filteredXML->addChild('buss', $node->asXML());
-                    break;
-                }
+    return $sortedXml;
+}
+
+function searchXML($xml, $searchField) {
+    $filteredXML = new SimpleXMLElement('<bussid></bussid>');
+    foreach ($xml->xpath('//buss') as $node) {
+        foreach ($node->children() as $child) {
+            if (stristr($child, $searchField) !== false) {
+                $filteredXML->addChild('buss', $node->asXML());
+                break;
             }
         }
-
-        return $filteredXML;
     }
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $marsruut = $_POST['marsruut'];
-        $lähtepunkt = $_POST['lähtepunkt'];
-        $sihtpunkt = $_POST['sihtpunkt'];
-        $väljumisaeg = $_POST['väljumisaeg'];
 
-        $xml = simplexml_load_file('src/data/busses_data.xml');
+    return $filteredXML;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $marsruut = $_POST['marsruut'];
+    $lähtepunkt = $_POST['lähtepunkt'];
+    $sihtpunkt = $_POST['sihtpunkt'];
+    $väljumisaeg = $_POST['väljumisaeg'];
 
-        $newBuss = $xml->addChild('buss');
-        $newBuss->addAttribute('marsruut', $marsruut);
+    $xml = simplexml_load_file('src/data/busses_data.xml');
 
-        $newBuss->addChild('lähtepunkt', $lähtepunkt);
-        $newBuss->addChild('sihtpunkt', $sihtpunkt);
-        $newBuss->addChild('väljumisaeg', $väljumisaeg);
+    $newBuss = $xml->addChild('buss');
+    $newBuss->addAttribute('marsruut', $marsruut);
 
-        $xml->asXML('src/data/busses_data.xml');
+    $newBuss->addChild('lähtepunkt', $lähtepunkt);
+    $newBuss->addChild('sihtpunkt', $sihtpunkt);
+    $newBuss->addChild('väljumisaeg', $väljumisaeg);
 
-        echo "Andmete lisamine õnnestus";
-        header('Location: index.php');
-    } 
+    $xml->asXML('src/data/busses_data.xml');
+
+    $jsonFile = 'src/data/busses.json';
+
+    if (file_exists($jsonFile)) {
+        $jsonContent = file_get_contents($jsonFile);
+        $jsonData = json_decode($jsonContent, true);
+    } else {
+        $jsonData = ['buss' => []];
+    }
+
+    $newBuss = [
+        "@attributes" => [
+            "marsruut" => $marsruut
+        ],
+        "l\u00e4htepunkt" => $lähtepunkt,
+        "sihtpunkt" => $sihtpunkt,
+        "v\u00e4ljumisaeg" => $väljumisaeg
+    ];
+
+    $jsonData['buss'][] = $newBuss;
+
+    file_put_contents($jsonFile, json_encode($jsonData, JSON_PRETTY_PRINT));
+
+    echo "Andmete lisamine õnnestus";
+    header('Location: index.php');
+} 
 ?>
 
 <!DOCTYPE html>
@@ -61,26 +101,26 @@
     <header><h1>Bussijaama haldussüsteem</h1></header>
 
     <?php
-    $xml = simplexml_load_file('src/data/busses_data.xml');
+        $xml = simplexml_load_file('src/data/busses_data.xml');
 
-    $xslt = new XSLTProcessor;
-    $xsl = new DOMDocument;
-    $xsl->load('src/template/busses_template.xsl');
-    $xslt->importStylesheet($xsl);
+        $xslt = new XSLTProcessor;
+        $xsl = new DOMDocument;
+        $xsl->load('src/template/busses_template.xsl');
+        $xslt->importStylesheet($xsl);
 
-    if (isset($_GET['sort'])) {
-        $sortField = $_GET['sort'];
-        $xml = sortXML($xml, $sortField);
-    }
+        if (isset($_GET['sort'])) {
+            $sortField = $_GET['sort'];
+            $xml = sortXML($xml, $sortField);
+        }
 
-    if (isset($_GET['search'])) {
-        $searchField = $_GET['search'];
-        $xml = searchXML($xml, $searchField);
-    }
+        if (isset($_GET['search'])) {
+            $searchField = $_GET['search'];
+            $xml = searchXML($xml, $searchField);
+        }
 
-    $html = $xslt->transformToXML($xml);
+        $html = $xslt->transformToXML($xml);
 
-    echo $html;
+        echo $html;
     ?>
     <div class="container">
         <h2>Andmete lisamine</h2>
