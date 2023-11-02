@@ -5,14 +5,28 @@ $json = json_encode($xml, JSON_PRETTY_PRINT);
 
 $jsonFile = 'src/data/busses.json'; 
 
-if (filesize($jsonFile) === 0) 
-{    
+if (filesize($jsonFile) === 0) {
     $xmlString = file_get_contents('src/data/busses_data.xml');
     $xml = simplexml_load_string($xmlString);
-    $json = json_encode($xml, JSON_PRETTY_PRINT);
+    $jsonData = [
+        "bussid" => []
+    ];
 
-    $jsonData = json_decode($json, true);
-    
+    foreach ($xml->buss as $buss) {
+        $bussData = [
+            "buss" => [
+                "@attributes" => [
+                    "marsruut" => (string)$buss['marsruut']
+                ],
+                "l\u00e4htepunkt" => (string)$buss->lähtepunkt,
+                "sihtpunkt" => (string)$buss->sihtpunkt,
+                "v\u00e4ljumisaeg" => (string)$buss->väljumisaeg
+            ]
+            
+        ];
+        $jsonData["bussid"][] = $bussData;
+    }
+
     file_put_contents($jsonFile, json_encode($jsonData, JSON_PRETTY_PRINT));
 }
 
@@ -67,19 +81,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $jsonContent = file_get_contents($jsonFile);
         $jsonData = json_decode($jsonContent, true);
     } else {
-        $jsonData = ['buss' => []];
+        $jsonData = ['bussid' => []];
     }
 
     $newBuss = [
-        "@attributes" => [
-            "marsruut" => $marsruut
-        ],
-        "l\u00e4htepunkt" => $lähtepunkt,
-        "sihtpunkt" => $sihtpunkt,
-        "v\u00e4ljumisaeg" => $väljumisaeg
+        "buss" => [
+            "@attributes" => [
+                "marsruut" => $marsruut
+            ],
+            "l\u00e4htepunkt" => $lähtepunkt,
+            "sihtpunkt" => $sihtpunkt,
+            "v\u00e4ljumisaeg" => $väljumisaeg
+        ]
+        
     ];
 
-    $jsonData['buss'][] = $newBuss;
+    $jsonData['bussid'][] = $newBuss;
 
     file_put_contents($jsonFile, json_encode($jsonData, JSON_PRETTY_PRINT));
 

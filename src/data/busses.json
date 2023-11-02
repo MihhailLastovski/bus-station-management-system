@@ -1,28 +1,34 @@
 {
-    "buss": [
+    "bussid": [
         {
-            "@attributes": {
-                "marsruut": "1A"
-            },
-            "l\u00e4htepunkt": "A-st",
-            "sihtpunkt": "B-sse",
-            "v\u00e4ljumisaeg": "2023-11-01 10:00"
+            "buss": {
+                "@attributes": {
+                    "marsruut": "1A"
+                },
+                "l\\u00e4htepunkt": "A-st",
+                "sihtpunkt": "B-sse",
+                "v\\u00e4ljumisaeg": "2023-11-01 10:00"
+            }
         },
         {
-            "@attributes": {
-                "marsruut": "2B"
-            },
-            "l\u00e4htepunkt": "C-st",
-            "sihtpunkt": "D-sse",
-            "v\u00e4ljumisaeg": "2023-11-02 15:00"
+            "buss": {
+                "@attributes": {
+                    "marsruut": "2B"
+                },
+                "l\\u00e4htepunkt": "C-st",
+                "sihtpunkt": "D-sse",
+                "v\\u00e4ljumisaeg": "2023-11-02 15:00"
+            }
         },
         {
-            "@attributes": {
-                "marsruut": "3C"
-            },
-            "l\u00e4htepunkt": "A-st",
-            "sihtpunkt": "D-sse",
-            "v\u00e4ljumisaeg": "2023-11-03 11:00"
+            "buss": {
+                "@attributes": {
+                    "marsruut": "3C"
+                },
+                "l\\u00e4htepunkt": "A-st",
+                "sihtpunkt": "D-sse",
+                "v\\u00e4ljumisaeg": "2023-11-03 11:00"
+            }
         }
     ]
 }
