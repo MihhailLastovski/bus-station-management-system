@@ -17,11 +17,6 @@ header, footer {
     border: 3pt solid black;
 }
 
-footer{
-    width: 100%;
-    
-}
-
 .container {
     max-width: 800px;
     margin: 56px auto;
@@ -42,10 +37,13 @@ h1 {
 footer {
     position: fixed;
     bottom: 0;
+    height: 10px;
+    width: 100%;
+    padding: 10px;
 }
 
 footer p {
-    font-size: 18px;
+    font-size: 14px;
     margin: 0;
     color: black;
     font-weight: bold;
