@@ -15,4 +15,4 @@
     <sihtpunkt>D-sse</sihtpunkt>
     <väljumisaeg>2023-11-03 11:00</väljumisaeg>
   </buss>
-</bussid>
+<buss marsruut="123"><lähtepunkt>421</lähtepunkt><sihtpunkt>12</sihtpunkt><väljumisaeg>2023-11-30T12:32</väljumisaeg></buss><buss marsruut="241"><lähtepunkt>51</lähtepunkt><sihtpunkt>512</sihtpunkt><väljumisaeg>0313-12-04T21:03</väljumisaeg></buss></bussid>
